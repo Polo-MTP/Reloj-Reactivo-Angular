@@ -1,0 +1,147 @@
+@if (visible) {
+  <div class="modal-backdrop" (click)="onBackdropClick($event)">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>✏️ Editar Reloj</h2>
+        <button type="button" class="btn-close" (click)="cerrarModal()">
+          ✕
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form [formGroup]="relojForm" (ngSubmit)="onSubmit()" class="reloj-form">
+          <div class="time-inputs">
+            <div class="input-group">
+              <label for="hora">Hora (0-23):</label>
+              <input 
+                type="number" 
+                id="hora" 
+                formControlName="hora" 
+                min="0" 
+                max="23"
+                class="form-control"
+              >
+              @if (relojForm.get('hora')?.touched && relojForm.get('hora')?.errors) {
+                <div class="error-message">
+                  @if (relojForm.get('hora')?.errors?.['required']) {
+                    La hora es requerida
+                  }
+                  @if (relojForm.get('hora')?.errors?.['min'] || relojForm.get('hora')?.errors?.['max']) {
+                    La hora debe estar entre 0 y 23
+                  }
+                </div>
+              }
+            </div>
+            
+            <div class="input-group">
+              <label for="minuto">Minuto (0-59):</label>
+              <input 
+                type="number" 
+                id="minuto" 
+                formControlName="minuto" 
+                min="0" 
+                max="59"
+                class="form-control"
+              >
+              @if (relojForm.get('minuto')?.touched && relojForm.get('minuto')?.errors) {
+                <div class="error-message">
+                  @if (relojForm.get('minuto')?.errors?.['required']) {
+                    El minuto es requerido
+                  }
+                  @if (relojForm.get('minuto')?.errors?.['min'] || relojForm.get('minuto')?.errors?.['max']) {
+                    El minuto debe estar entre 0 y 59
+                  }
+                </div>
+              }
+            </div>
+            
+            <div class="input-group">
+              <label for="segundo">Segundo (0-59):</label>
+              <input 
+                type="number" 
+                id="segundo" 
+                formControlName="segundo" 
+                min="0" 
+                max="59"
+                class="form-control"
+              >
+              @if (relojForm.get('segundo')?.touched && relojForm.get('segundo')?.errors) {
+                <div class="error-message">
+                  @if (relojForm.get('segundo')?.errors?.['required']) {
+                    El segundo es requerido
+                  }
+                  @if (relojForm.get('segundo')?.errors?.['min'] || relojForm.get('segundo')?.errors?.['max']) {
+                    El segundo debe estar entre 0 y 59
+                  }
+                </div>
+              }
+            </div>
+          </div>
+          
+          <div class="color-inputs">
+            <div class="input-group">
+              <label for="colorLabel">Color de Texto:</label>
+              <div class="color-input-wrapper">
+                <input 
+                  type="color" 
+                  id="colorLabel" 
+                  formControlName="colorLabel"
+                  class="form-control color-input"
+                >
+                <span class="color-value">{{ relojForm.get('colorLabel')?.value }}</span>
+              </div>
+            </div>
+            
+            <div class="input-group">
+              <label for="colorManecillas">Color de Manecillas:</label>
+              <div class="color-input-wrapper">
+                <input 
+                  type="color" 
+                  id="colorManecillas" 
+                  formControlName="colorManecillas"
+                  class="form-control color-input"
+                >
+                <span class="color-value">{{ relojForm.get('colorManecillas')?.value }}</span>
+              </div>
+            </div>
+            
+            <div class="input-group">
+              <label for="colorPuntos">Color de Marcas:</label>
+              <div class="color-input-wrapper">
+                <input 
+                  type="color" 
+                  id="colorPuntos" 
+                  formControlName="colorPuntos"
+                  class="form-control color-input"
+                >
+                <span class="color-value">{{ relojForm.get('colorPuntos')?.value }}</span>
+              </div>
+            </div>
+            
+            <div class="input-group">
+              <label for="colorNumeros">Color de Números:</label>
+              <div class="color-input-wrapper">
+                <input 
+                  type="color" 
+                  id="colorNumeros" 
+                  formControlName="colorNumeros"
+                  class="form-control color-input"
+                >
+                <span class="color-value">{{ relojForm.get('colorNumeros')?.value }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" (click)="cerrarModal()" class="btn btn-secondary">
+              Cancelar
+            </button>
+            <button type="submit" [disabled]="!relojForm.valid" class="btn btn-primary">
+              Actualizar Reloj
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+}

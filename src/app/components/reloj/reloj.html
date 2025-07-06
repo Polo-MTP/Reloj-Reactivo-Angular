@@ -1,0 +1,227 @@
+<div class="reloj-container">
+  <!-- Formulario para crear nuevos relojes -->
+  <div class="form-section">
+    <h2>⏰ Crear Nuevo Reloj</h2>
+    
+    <form [formGroup]="relojForm" (ngSubmit)="onSubmit()" class="reloj-form">
+      <div class="time-inputs">
+        <div class="input-group">
+          <label for="hora">Hora (0-23):</label>
+          <input 
+            type="number" 
+            id="hora" 
+            formControlName="hora" 
+            min="0" 
+            max="23"
+            class="form-control"
+          >
+        </div>
+        
+        <div class="input-group">
+          <label for="minuto">Minuto (0-59):</label>
+          <input 
+            type="number" 
+            id="minuto" 
+            formControlName="minuto" 
+            min="0" 
+            max="59"
+            class="form-control"
+          >
+        </div>
+        
+        <div class="input-group">
+          <label for="segundo">Segundo (0-59):</label>
+          <input 
+            type="number" 
+            id="segundo" 
+            formControlName="segundo" 
+            min="0" 
+            max="59"
+            class="form-control"
+          >
+        </div>
+      </div>
+      
+      <div class="color-inputs">
+        <div class="input-group">
+          <label for="colorLabel">Color de Texto:</label>
+          <input 
+            type="color" 
+            id="colorLabel" 
+            formControlName="colorLabel"
+            class="form-control color-input"
+          >
+        </div>
+        
+        <div class="input-group">
+          <label for="colorManecillas">Color de Manecillas:</label>
+          <input 
+            type="color" 
+            id="colorManecillas" 
+            formControlName="colorManecillas"
+            class="form-control color-input"
+          >
+        </div>
+        
+        <div class="input-group">
+          <label for="colorPuntos">Color de Marcas:</label>
+          <input 
+            type="color" 
+            id="colorPuntos" 
+            formControlName="colorPuntos"
+            class="form-control color-input"
+          >
+        </div>
+        
+        <div class="input-group">
+          <label for="colorNumeros">Color de Números:</label>
+          <input 
+            type="color" 
+            id="colorNumeros" 
+            formControlName="colorNumeros"
+            class="form-control color-input"
+          >
+        </div>
+      </div>
+      
+      <div class="form-buttons">
+        <button type="submit" [disabled]="!relojForm.valid" class="btn btn-primary">
+          🚀 Crear Reloj
+        </button>
+      </div>
+    </form>
+  </div>
+  
+  <!-- Lista de relojes creados -->
+  <div class="relojes-section">
+    <h2>Mis Relojes</h2>
+    
+    @if (relojes$ | async; as relojes) {
+      @if (relojes.length === 0) {
+        <div class="no-relojes">
+          <p>No hay relojes creados aún.</p>
+          <p>¡Crea tu primer reloj usando el formulario!</p>
+        </div>
+      } @else {
+        <div class="relojes-grid">
+          @for (reloj of relojes; track reloj.id) {
+            <div class="reloj-card">
+              <!-- Reloj Digital -->
+              <div class="reloj-digital">
+                <div class="time-display" [style.color]="reloj.colorLabel">
+                  {{ obtenerHoraFormateada(reloj.id) | async }}
+                </div>
+              </div>
+              
+              <!-- Reloj Análogo -->
+              <div class="reloj-analogico">
+                <svg viewBox="0 0 200 200" class="clock-svg">
+                  <!-- Círculo exterior -->
+                  <circle cx="100" cy="100" r="95" fill="white" stroke="#ddd" stroke-width="2"/>
+                  
+                  <!-- Marcas de las horas -->
+                  @for (marca of marcasHoras; track $index) {
+                    <line 
+                      [attr.x1]="marca.x1" 
+                      [attr.y1]="marca.y1" 
+                      [attr.x2]="marca.x2" 
+                      [attr.y2]="marca.y2" 
+                      [attr.stroke]="reloj.colorPuntos" 
+                      stroke-width="3"
+                    />
+                  }
+                  
+                  <!-- Puntos de los minutos -->
+                  @for (punto of puntosMinutos; track $index) {
+                    <circle 
+                      [attr.cx]="punto.x" 
+                      [attr.cy]="punto.y" 
+                      r="1" 
+                      [attr.fill]="reloj.colorPuntos"
+                    />
+                  }
+                  
+                  <!-- Números de las horas (1-12) -->
+                  @for (numero of numerosHoras; track $index) {
+                    <text 
+                      [attr.x]="numero.x" 
+                      [attr.y]="numero.y" 
+                      [attr.fill]="reloj.colorNumeros"
+                      text-anchor="middle" 
+                      dominant-baseline="middle"
+                      font-family="Arial, sans-serif"
+                      font-size="14"
+                      font-weight="bold"
+                    >
+                      {{numero.numero}}
+                    </text>
+                  }
+                  
+                  <!-- Manecilla de horas -->
+                  @if (obtenerPosicionManecilla(reloj.id, 'hora') | async; as posicionHora) {
+                    <line 
+                      x1="100" 
+                      y1="100" 
+                      [attr.x2]="posicionHora.x" 
+                      [attr.y2]="posicionHora.y" 
+                      [attr.stroke]="reloj.colorManecillas" 
+                      stroke-width="4" 
+                      stroke-linecap="round"
+                    />
+                  }
+                  
+                  <!-- Manecilla de minutos -->
+                  @if (obtenerPosicionManecilla(reloj.id, 'minuto') | async; as posicionMinuto) {
+                    <line 
+                      x1="100" 
+                      y1="100" 
+                      [attr.x2]="posicionMinuto.x" 
+                      [attr.y2]="posicionMinuto.y" 
+                      [attr.stroke]="reloj.colorManecillas" 
+                      stroke-width="3" 
+                      stroke-linecap="round"
+                    />
+                  }
+                  
+                  <!-- Manecilla de segundos -->
+                  @if (obtenerPosicionManecilla(reloj.id, 'segundo') | async; as posicionSegundo) {
+                    <line 
+                      x1="100" 
+                      y1="100" 
+                      [attr.x2]="posicionSegundo.x" 
+                      [attr.y2]="posicionSegundo.y" 
+                      [attr.stroke]="reloj.colorManecillas" 
+                      stroke-width="1" 
+                      stroke-linecap="round"
+                    />
+                  }
+                  
+                  <!-- Centro del reloj -->
+                  <circle cx="100" cy="100" r="4" [attr.fill]="reloj.colorManecillas"/>
+                </svg>
+              </div>
+              
+              <!-- Controles del reloj -->
+              <div class="reloj-controls">
+                <button (click)="editarReloj(reloj.id)" class="btn btn-edit">
+                  ✏️ Editar
+                </button>
+                <button (click)="eliminarReloj(reloj.id)" class="btn btn-delete">
+                  🗑️ Eliminar
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+  
+  <!-- Modal de edición -->
+  <app-modal-editar-reloj
+    [visible]="modalVisible"
+    [relojId]="relojEditandoId"
+    (cerrar)="cerrarModal()"
+    (actualizado)="onRelojActualizado()"
+  ></app-modal-editar-reloj>
+</div>
