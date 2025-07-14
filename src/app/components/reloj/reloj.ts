@@ -5,11 +5,12 @@ import { CommonModule } from '@angular/common';
 import { RelojService } from '../../services/reloj';
 import { Reloj } from '../../models/reloj';
 import { ModalEditarRelojComponent } from '../modal-editar-reloj/modal-editar-reloj';
+import { ModalControlTiempoComponent } from '../modal-control-tiempo/modal-control-tiempo';
 
 @Component({
   selector: 'app-reloj',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ModalEditarRelojComponent],
+  imports: [CommonModule, ReactiveFormsModule, ModalEditarRelojComponent, ModalControlTiempoComponent],
   templateUrl: './reloj.html',
   styleUrl: './reloj.scss',
 })
@@ -17,9 +18,13 @@ export class RelojComponent implements OnInit, OnDestroy {
   relojForm: FormGroup;
   relojes$: Observable<Reloj[]>;
   
-  // Propiedades para el modal
+  // Propiedades para el modal de edición
   modalVisible = false;
   relojEditandoId?: number;
+  
+  // Propiedades para el modal de control de tiempo
+  modalControlTiempoVisible = false;
+  relojControlTiempoId?: number;
 
   // Marcas para el reloj análogo
   marcasHoras: Array<{ x1: number; y1: number; x2: number; y2: number }> = [];
@@ -52,6 +57,7 @@ export class RelojComponent implements OnInit, OnDestroy {
       colorManecillas: ['#000000', Validators.required],
       colorPuntos: ['#666666', Validators.required],
       colorNumeros: ['#000000', Validators.required],
+      colorFondo: ['#ffffff', Validators.required],
     });
   }
 
@@ -69,6 +75,7 @@ export class RelojComponent implements OnInit, OnDestroy {
         colorManecillas: '#000000',
         colorPuntos: '#666666',
         colorNumeros: '#000000',
+        colorFondo: '#ffffff',
       });
     }
   }
@@ -86,6 +93,17 @@ export class RelojComponent implements OnInit, OnDestroy {
   onRelojActualizado(): void {
     // Método que se ejecuta cuando el reloj ha sido actualizado desde el modal
     // Aquí podrías agregar lógica adicional si es necesaria
+  }
+
+  // Métodos para el modal de control de tiempo
+  abrirControlTiempo(id: number): void {
+    this.relojControlTiempoId = id;
+    this.modalControlTiempoVisible = true;
+  }
+
+  cerrarModalControlTiempo(): void {
+    this.modalControlTiempoVisible = false;
+    this.relojControlTiempoId = undefined;
   }
 
   eliminarReloj(id: number): void {

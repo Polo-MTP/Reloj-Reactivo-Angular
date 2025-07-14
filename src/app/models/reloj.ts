@@ -7,6 +7,7 @@ export interface Reloj {
   colorManecillas: string;
   colorPuntos: string;
   colorNumeros: string;
+  colorFondo: string;
   createdAt: Date;
   updatedAt?: Date;
 }

@@ -1,0 +1,41 @@
+@if (visible) {
+<div class="modal-backdrop" (click)="onBackdropClick($event)">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h2>👁️</h2>
+      <button type="button" class="btn-close" (click)="cerrarModal()">✕</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="tiempo-actual">
+        <h3>Tiempo Actual</h3>
+        <div class="tiempo-display">{{ tiempoActual$ | async }}</div>
+      </div>
+
+      <div class="controles-tiempo">
+        <button
+          type="button"
+          (click)="retrocederSegundo()"
+          class="btn btn-control"
+        >
+          ⏪ Retroceder 1 Segundo
+        </button>
+
+        <button
+          type="button"
+          (click)="adelantarSegundo()"
+          class="btn btn-control"
+        >
+          ⏩ Adelantar 1 Segundo
+        </button>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" (click)="cerrarModal()" class="btn btn-secondary">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+}

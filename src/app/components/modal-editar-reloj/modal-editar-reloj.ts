@@ -36,13 +36,11 @@ export class ModalEditarRelojComponent implements OnInit, OnChanges {
 
   private crearFormulario(): FormGroup {
     return this.fb.group({
-      hora: [0, [Validators.required, Validators.min(0), Validators.max(23)]],
-      minuto: [0, [Validators.required, Validators.min(0), Validators.max(59)]],
-      segundo: [0, [Validators.required, Validators.min(0), Validators.max(59)]],
       colorLabel: ['#000000', Validators.required],
       colorManecillas: ['#000000', Validators.required],
       colorPuntos: ['#666666', Validators.required],
       colorNumeros: ['#000000', Validators.required],
+      colorFondo: ['#ffffff', Validators.required],
     });
   }
 
@@ -53,13 +51,11 @@ export class ModalEditarRelojComponent implements OnInit, OnChanges {
       if (reloj) {
         this.relojOriginal = reloj;
         this.relojForm.patchValue({
-          hora: reloj.hora,
-          minuto: reloj.minuto,
-          segundo: reloj.segundo,
           colorLabel: reloj.colorLabel,
           colorManecillas: reloj.colorManecillas,
           colorPuntos: reloj.colorPuntos,
           colorNumeros: reloj.colorNumeros,
+          colorFondo: reloj.colorFondo,
         });
       }
     });
@@ -89,6 +85,21 @@ export class ModalEditarRelojComponent implements OnInit, OnChanges {
   onBackdropClick(event: Event): void {
     if (event.target === event.currentTarget) {
       this.cerrarModal();
+    }
+  }
+
+  // Método para actualizar colores en tiempo real
+  onColorChange(): void {
+    if (this.relojForm.valid && this.relojId) {
+      const datosColores = {
+        colorLabel: this.relojForm.get('colorLabel')?.value,
+        colorManecillas: this.relojForm.get('colorManecillas')?.value,
+        colorPuntos: this.relojForm.get('colorPuntos')?.value,
+        colorNumeros: this.relojForm.get('colorNumeros')?.value,
+        colorFondo: this.relojForm.get('colorFondo')?.value,
+      };
+      
+      this.relojService.actualizarReloj(this.relojId, datosColores);
     }
   }
 }

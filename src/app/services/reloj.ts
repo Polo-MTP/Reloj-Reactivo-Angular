@@ -136,6 +136,103 @@ export class RelojService {
     }
   }
 
+  // Adelantar un segundo al reloj específico
+  adelantarSegundo(id: number): void {
+    const relojesActuales = this.relojesSubject.getValue();
+    const indiceReloj = relojesActuales.findIndex((r) => r.id === id);
+
+    if (indiceReloj !== -1) {
+      const reloj = relojesActuales[indiceReloj];
+      
+      // Calcular la nueva hora con un segundo adelantado
+      let nuevaHora = reloj.hora;
+      let nuevoMinuto = reloj.minuto;
+      let nuevoSegundo = reloj.segundo + 1;
+
+      // Ajustar overflow de segundos
+      if (nuevoSegundo >= 60) {
+        nuevoSegundo = 0;
+        nuevoMinuto++;
+      }
+
+      // Ajustar overflow de minutos
+      if (nuevoMinuto >= 60) {
+        nuevoMinuto = 0;
+        nuevaHora++;
+      }
+
+      // Ajustar overflow de horas
+      if (nuevaHora >= 24) {
+        nuevaHora = 0;
+      }
+
+      // Actualizar el reloj con la nueva hora
+      const relojActualizado = {
+        ...reloj,
+        hora: nuevaHora,
+        minuto: nuevoMinuto,
+        segundo: nuevoSegundo,
+        updatedAt: new Date(),
+      };
+
+      relojesActuales[indiceReloj] = relojActualizado;
+      this.relojesSubject.next([...relojesActuales]);
+
+      // Reiniciar el intervalo con la nueva hora
+      this.detenerIntervalo(id);
+      this.iniciarIntervalo(relojActualizado);
+    }
+  }
+
+  // Retroceder un segundo al reloj específico
+  retrocederSegundo(id: number): void {
+    const relojesActuales = this.relojesSubject.getValue();
+    const indiceReloj = relojesActuales.findIndex((r) => r.id === id);
+
+    if (indiceReloj !== -1) {
+      const reloj = relojesActuales[indiceReloj];
+      
+      // Calcular la nueva hora con un segundo retrocedido
+      let nuevaHora = reloj.hora;
+      let nuevoMinuto = reloj.minuto;
+      let nuevoSegundo = reloj.segundo - 1;
+
+      // Ajustar underflow de segundos
+      if (nuevoSegundo < 0) {
+        nuevoSegundo = 59;
+        nuevoMinuto--;
+      }
+
+      // Ajustar underflow de minutos
+      if (nuevoMinuto < 0) {
+        nuevoMinuto = 59;
+        nuevaHora--;
+      }
+
+      // Ajustar underflow de horas
+      if (nuevaHora < 0) {
+        nuevaHora = 23;
+      }
+
+      // Actualizar el reloj con la nueva hora
+      const relojActualizado = {
+        ...reloj,
+        hora: nuevaHora,
+        minuto: nuevoMinuto,
+        segundo: nuevoSegundo,
+        updatedAt: new Date(),
+      };
+
+      relojesActuales[indiceReloj] = relojActualizado;
+      this.relojesSubject.next([...relojesActuales]);
+
+      // Reiniciar el intervalo con la nueva hora
+      this.detenerIntervalo(id);
+      this.iniciarIntervalo(relojActualizado);
+    }
+  }
+
+
   // Limpiar todos los intervalos al destruir el servicio
   destruirTodos(): void {
     this.intervalos.forEach((intervalo) => intervalo.unsubscribe());
